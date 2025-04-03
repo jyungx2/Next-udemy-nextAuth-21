@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 function UserProfile() {
   // ❌ 기본적으로 로그인되지 않은 사용자는 /profile 페이지를 볼 수 없어야 하므로 직접 세션을 체크해서 로그인 여부를 판단하고 리다이렉트 처리해야 함
+
   /**
    * 🔐 보호 페이지 로직 설명
    * - 로그인하지 않은 사용자는 /profile 페이지에 접근하면 안 됨
@@ -13,9 +14,10 @@ function UserProfile() {
    * - getSession()은 최신 세션 정보를 명확하게 가져오므로,
    *   로그인 여부를 확실하게 판별 가능 (null 또는 session 객체)
    * - 따라서 getSession() + useState를 이용해 직접 isLoading 상태를 관리하는 방식이 더 안전함
-   */
+   **/
 
-  const { data, status } = useSession(); // ⚠️ 초기엔 session === undefined, status === 'loading'이라 확정적인 로그인 여부를 알 수 없음
+  /*
+  // const { data, status } = useSession(); // ⚠️ 초기엔 session === undefined, status === 'loading'이라 확정적인 로그인 여부를 알 수 없음
 
   // ✅ 이 컴포넌트에서 사용할 로딩 상태를 직접 관리
   const [isLoading, setIsLoading] = useState(true); // ✅ 세션 확인 전까지 로딩 상태 유지
@@ -39,6 +41,7 @@ function UserProfile() {
   if (isLoading) {
     return <p className={classes.profile}>Loading...</p>;
   }
+  */
 
   // ✅ 세션이 확인되고 인증된 경우에만 아래 콘텐츠 렌더링
   return (
