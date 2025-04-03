@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
+import CredentialProvider from "next-auth/providers/credentials";
 import { connectToDatabase } from "../../../lib/db";
 import { verifyPassword } from "../../../lib/auth";
 
@@ -8,7 +8,7 @@ export default NextAuth({
     jwt: true,
   },
   providers: [
-    Providers.Credentials({
+    CredentialProvider({
       async authorize(credentials) {
         const client = await connectToDatabase();
         const usersCollection = client.db().collection("users");

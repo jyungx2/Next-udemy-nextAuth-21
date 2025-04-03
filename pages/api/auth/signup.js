@@ -24,7 +24,7 @@ async function handler(req, res) {
     }
 
     const client = await connectToDatabase();
-    const db = client.db("urang-market");
+    const db = client.db();
 
     // 중복 아이디 계정 방지 로직
     const existingUser = await db.collection("users").findOne({ email: email });
@@ -37,7 +37,8 @@ async function handler(req, res) {
 
     const hashedPassword = await hashPassword(password);
 
-    db.collection("users").insertOne({
+    // 💥 await을 안붙이면 비동기 작업은 기다려주지 않기 때문에 성공 응답만 보내고, 실제 db에는 데이터 저장이 안됨!
+    await db.collection("users").insertOne({
       email,
       password: hashedPassword,
     });
