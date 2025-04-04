@@ -42,13 +42,26 @@ function AuthForm() {
 
     if (isLogin) {
       // log user in -> 🌟use signIn lib🌟
+      // signIn(): 클라이언트에서 백엔드(next-auth 서버)로 로그인 요청을 보내는 함수 => 로그인 성공 여부를 서버가 판단 & 클라이언트는 결과를 받아서 로그인 처리 후, 리다이렉트 또는 에러 처리(result.error 객체 유무 판단)..
+      // 🍓 credentials = Next Auth 설정 파일의 providers안에 등록한 id
       const result = await signIn("credentials", {
         redirect: false,
+        // 로그인 정보 (CredentialsProvider에서 설정한 필드명과 일치해야 함)
         email: enteredEmail,
         password: enteredPassword,
+        // callbackUrl: "/profile", => redirect: true일 때, 로그인 성공하면 해당 Url로 자동 이동 (만약 redirect: false이면 callbackUrl 작성해도 이동 x)
       });
       console.log(result);
+      /* 반환값 (result 객체) :
+      {
+        error: null,         // 실패하면 에러 메시지
+        status: 200,         // HTTP 상태 코드
+        ok: true,            // 성공 여부
+        url: "/profile"      // redirect: true일 경우 이동할 URL
+      }
+      */
 
+      // 🍋 Next Auth설정 파일에서 throw new Error()에 보낸 메시지가 담겨오는 속성(error 여부 확인)
       if (!result.error) {
         // set some auth state
         router.replace("/profile");

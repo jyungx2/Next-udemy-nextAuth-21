@@ -8,7 +8,7 @@ async function handler(req, res) {
   }
 
   // ✅ Code with which we protect our API route against unauthenticated access. => 유저 권한이 필요한 모든 페이지에서 필요한 코드!
-  const session = await getSession({ req: req });
+  const session = await getSession({ req: req }); // 💥 서버(getServerSideProps, API Routes)에서 getSession()호출은 req 값에 클라이언트로부터 넘어온 적절한 값(= 여기서 req) 지정 (그렇지 않으면, null이나 undefined이 반환되어 오류 발생.)
   if (!session) {
     // 401 = standard status code for saying that authentication is missing.
     res.status(401).json({ message: "Not authenticated!" });

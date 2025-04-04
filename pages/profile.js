@@ -5,7 +5,7 @@ import { getSession } from "next-auth/react";
 
 function ProfilePage() {
   // ✅ 이 페이지는 유저가 로그인되어 있을 때만 접근 가능한 보호 페이지
-  // getServerSideProps()에서 로그인 여부를 확인했기 때문에, 여기선 별도의 클라이언트(<UseProfile>에서 쓴 보호로직 삭제 ok) 보호 로직이 필요 없음
+  // getServerSideProps()에서 페이지가 렌더링되기 전에 이미 로그인 여부(쿠키유무)를 확인했기 때문에(-> 높은 보안성 & SEO 가능), 여기선 별도의 클라이언트(<UseProfile />에서 쓴 보호로직 삭제 ok) 보호 로직이 필요 없음
   return <UserProfile />;
 }
 
@@ -16,15 +16,16 @@ export async function getServerSideProps(context) {
   // 🔐 "요청(request) 객체 자체가 "쿠키"를 포함하고 있고,
   // getSession 내부에서 알아서 req.headers.cookie를 읽어 쿠키 유무(즉, 로그인 여부)를 판단하기 때문"
   // => 즉, getSession은 우리가 넘긴 req 박스를 열어서 거기서 headers.cookie를 확인하고 그 안에 있는 next-auth.session-token 같은 쿠키 값을 파싱해서 로그인 상태인지 판단한다. 우리가 직접 req.headers.cookie를 읽을 필요 없이, getSession()이 내부에서 대신 해주는 것
-  const session = await getSession({ req: context.req });
+  const session = await getSession({ req: context.req }); // 💥 서버에서 getSession()호출은 req 값에 클라이언트로부터 넘어온 적절한 값(=context.req: 요청을 보낸 유저의 여러 정보가 담긴 객체) 지정 (그렇지 않으면, null이나 undefined이 반환되어 오류 발생.)
 
   // ✅ 세션이 없다면 (로그인하지 않은 사용자라면) profile 페이지에 못들어오게 막고, /auth로 즉시 리다이렉트!
   if (!session) {
     return {
-      // 🔁 "클라이언트로 HTML이 전달되기 전"(✨깜빡임 현상 안 나타나는  이유..), 서버 단계에서 /auth 페이지로 즉시 리다이렉트 시킴
+      // Next.js가 서버 리다이렉트를 처리하기 위해 요구하는 "약속된 형식"의 객체 구조 반환
+      // 🔁 "클라이언트로 HTML이 전달되기 전"(✨깜빡임 현상 안 나타나는  이유..), 서버 단계에서 /auth(로그인) 페이지로 즉시 리다이렉트 시킴
       redirect: {
         destination: "/auth",
-        permanent: false, // ❗ 일시적인 리다이렉트임을 명시 (검색 엔진에 캐싱되지 않도록)
+        permanent: false, // ❗ 일시적인 리다이렉트(302)임을 명시 (검색 엔진에 캐싱되지 않도록)
       },
     };
   }

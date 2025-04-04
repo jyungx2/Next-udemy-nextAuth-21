@@ -8,6 +8,7 @@ function MainNavigation() {
   const loading = status === "loading";
   console.log(session, status);
 
+  // 서버에 /api/auth/signout 요청을 보냄 & 브라우저의 세션 쿠키(JWT 포함)를 제거 & 기본적으로 홈페이지("/")로 리디렉트됨
   function logoutHandler() {
     signOut();
   }
