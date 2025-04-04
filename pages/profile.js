@@ -11,11 +11,11 @@ function ProfilePage() {
 
 // ✅ 이 함수는 요청이 들어올 때마다 서버에서 실행되며, 세션을 기준으로 보호 페이지 접근을 제어할 수 있음
 export async function getServerSideProps(context) {
-  // context.req: 이 페이지 요청을 보낸 유저의 정보"를 담고 있는 HTTP 요청 객체 (요청한 유저의 쿠키/헤더정보/IP주소/요청메소드,URL/기타 요청과 관련된 모든 raw 정보) ....유저 정보는 들어있지 않고, getSession()에 의해서 추출됨(session.user로 간접적으로 확인 가능)
+  // 💫context.req: 이 페이지 요청을 보낸 "유저의 정보"를 "담고 있는" HTTP 요청 객체 (요청한 유저의 헤더정보(쿠키)/IP주소/요청메소드,URL/기타 요청과 관련된 모든 raw 정보) ....유저 정보는 getSession({req})에 의해서 추출됨(session.user로 간접적으로 확인 가능)
   // ❓getSession({ req })에서 req만 넘기는 이유는:
   // 🔐 "요청(request) 객체 자체가 "쿠키"를 포함하고 있고,
   // getSession 내부에서 알아서 req.headers.cookie를 읽어 쿠키 유무(즉, 로그인 여부)를 판단하기 때문"
-  // => 즉, getSession은 우리가 넘긴 req 박스를 열어서 거기서 headers.cookie를 확인하고 그 안에 있는 next-auth.session-token 같은 쿠키 값을 파싱해서 로그인 상태인지 판단한다. 즉, 우리가 직접 req.headers.cookie를 읽을 필요 없이, getSession()이 내부에서 대신 해주는 것
+  // => 즉, getSession은 우리가 넘긴 req 박스를 열어서 거기서 headers.cookie를 확인하고 그 안에 있는 next-auth.session-token 같은 쿠키 값을 파싱해서 로그인 상태인지 판단한다. 우리가 직접 req.headers.cookie를 읽을 필요 없이, getSession()이 내부에서 대신 해주는 것
   const session = await getSession({ req: context.req });
 
   // ✅ 세션이 없다면 (로그인하지 않은 사용자라면) profile 페이지에 못들어오게 막고, /auth로 즉시 리다이렉트!
