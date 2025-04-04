@@ -4,7 +4,8 @@ import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <SessionProvider>
+    <SessionProvider session={pageProps.session}>
+      {/* ✅ 여기! 세션을 전달해야 함 */}
       <Layout>
         <Component {...pageProps} />
       </Layout>
@@ -13,4 +14,3 @@ function MyApp({ Component, pageProps }) {
 }
 
 export default MyApp;
-6;
